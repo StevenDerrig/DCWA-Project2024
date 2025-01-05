@@ -15,6 +15,14 @@
             margin-bottom: 20px;
         }
 
+        .error-container {
+            background-color: #ffebee;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            border: 1px solid #ffcdd2;
+        }
+
         .form-group {
             margin-bottom: 15px;
         }
@@ -37,12 +45,16 @@
 
 <body>
     <h1>Add Student</h1>
-
-    <% if (errorMessage) { %>
-        <div class="error-message">
-            <%= errorMessage %>
+    <!-- Display error messages -->
+    <% if (errors && errors.length > 0) { %>
+        <div class="error-container">
+            <% errors.forEach(function(error) { %>
+                <div class="error-message">
+                    • <%= error %>
+                </div>
+            <% }); %>
         </div>
-        <% } %>
+    <% } %>
 
             <form method="POST" action="/students/add">
                 <div class="form-group">

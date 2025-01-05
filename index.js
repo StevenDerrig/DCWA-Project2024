@@ -32,20 +32,22 @@ app.get('/students', async (req, res) => {
     try {
         const pool = db.getPool();
         const result = await pool.query('SELECT * FROM student ORDER BY sid');
-        res.render('students', { students: result,
-            message: req.query.message });
+        res.render('students', {
+            students: result,
+            message: req.query.message
+        });
     } catch (err) {
         res.status(500).send("Database error: " + err);
     }
 });
-//Edit students
+//Edit students GET
 app.get('/students/edit/:sid', async (req, res) => {
     console.log("GET request on /students/edit/" + req.params.sid);
     try {
         const pool = db.getPool();
         const result = await pool.query('SELECT * FROM student WHERE sid = ?', [req.params.sid]);
         if (result.length > 0) {
-            res.render('editStudent', {
+            res.render('editStudents', {
                 student: result[0],
                 error: null,
                 previousData: null
@@ -57,7 +59,7 @@ app.get('/students/edit/:sid', async (req, res) => {
         res.status(500).send("Database error: " + err);
     }
 });
-//Handle student update
+//Handle student update POST
 app.post('/students/edit/:sid', async (req, res) => {
     console.log("POST request on /students/edit/" + req.params.sid);
     const { name, age } = req.body;
@@ -71,7 +73,7 @@ app.post('/students/edit/:sid', async (req, res) => {
     }
 
     if (error) {
-        return res.render('editStudent', {
+        return res.render('editStudents', {
             student: { sid: req.params.sid, name, age },
             error: error,
             previousData: req.body
@@ -87,30 +89,32 @@ app.post('/students/edit/:sid', async (req, res) => {
         res.status(500).send("Database error: " + err);
     }
 });
-//Add student page
+//Add student page GET
 app.get('/students/add', (req, res) => {
     console.log("GET request on /students/add");
-    res.render('addStudent', { error: null, previousData: null });
+    res.render('addStudent', { errors: [], previousData: null });
 });
 
-//Handle add student
+//Handle add student POST
 app.post('/students/add', async (req, res) => {
     console.log("POST request on /students/add");
     const { sid, name, age } = req.body;
-    let error = null;
+    let errors = []; //Array to store errors
 
-    //Validation
+    //Validation - add to the array if there is an error
     if (!sid || sid.length !== 4) {
-        error = "Student ID must be 4 characters";
-    } else if (!name || name.length < 2) {
-        error = "Name should be a minimum of 2 characters";
-    } else if (!age || age < 18) {
-        error = "Age should be 18 or older";
+        errors.push("Student ID must be 4 characters");
+    }
+    if (!name || name.length < 2) {
+        errors.push("Name should be a minimum of 2 characters");
+    } 
+    if (!age || age < 18) {
+        errors.push("Age should be 18 or older");
     }
 
-    if (error) {
+    if (errors.length > 0) {
         return res.render('addStudent', {
-            error: error,
+            errors: errors,
             previousData: req.body
         });
     }
@@ -120,8 +124,9 @@ app.post('/students/add', async (req, res) => {
         //Check if student ID already exists
         const existing = await pool.query('SELECT * FROM student WHERE sid = ?', [sid]);
         if (existing.length > 0) {
+            errors.push(`Student with ID ${sid} already exists`);
             return res.render('addStudent', {
-                error: `Student with ID ${sid} already exists`,
+                errors: errors,
                 previousData: req.body
             });
         }
@@ -130,7 +135,11 @@ app.post('/students/add', async (req, res) => {
             [sid, name, age]);
         res.redirect('/students');
     } catch (err) {
-        res.status(500).send("Database error: " + err);
+        errors.push("Database error: " + err);
+        return res.render('addStudent', {
+            errors: errors,
+            previousData: req.body
+        });
     }
 });
 

@@ -10,7 +10,7 @@ const createPool = async () => {
             connectionLimit: 3,
             host: 'localhost',  
             user: 'root', //Wampserver default username
-            password: '', //Wampserver default password
+            password: 'root', //Wampserver default password
             database: 'proj2024mysql',
         });
 
