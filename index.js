@@ -107,7 +107,7 @@ app.post('/students/add', async (req, res) => {
     }
     if (!name || name.length < 2) {
         errors.push("Name should be a minimum of 2 characters");
-    } 
+    }
     if (!age || age < 18) {
         errors.push("Age should be 18 or older");
     }
@@ -140,6 +140,37 @@ app.post('/students/add', async (req, res) => {
             errors: errors,
             previousData: req.body
         });
+    }
+});
+
+//Get grades GET
+app.get('/grades', async (req, res) => {
+    console.log("GET request on /grades");
+    try {
+        const pool = db.getPool();
+
+        // Useing LEFT JOIN to include students with no modules
+        // Order by student name and grade in ASC order
+        const query = `
+            SELECT 
+                s.name AS studentName,
+                m.name AS moduleName,
+                g.grade
+            FROM student s
+            LEFT JOIN grade g ON s.sid = g.sid
+            LEFT JOIN module m ON g.mid = m.mid
+            ORDER BY s.name ASC, g.grade ASC
+        `;
+
+        const results = await pool.query(query);
+
+        //Display and render the grades
+        res.render('viewGrades', {
+            grades: results
+        });
+    } catch (err) {
+        console.error("Database error:", err);
+        res.status(500).send("Database error: " + err);
     }
 });
 
