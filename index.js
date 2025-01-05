@@ -10,14 +10,23 @@ app.use(bodyParser.urlencoded({ extended: true }));//Parse URL-encoded bodies
 app.use(bodyParser.json());//Used to parse JSON bodies
 
 //Import the database functions
-const db = require('./databases');//SQL database
+const db = require('./databases');//SQL and MongoDB functions and database
 
+//SQL connection
 db.createPool()
     .then(() => {
         console.log("Database connection pool created");
     })
     .catch((error) => {
         console.log("Failed to create database pool: " + error);
+    });
+//MongoDB connection
+db.connectToMongo()
+    .then(() => {
+        console.log("MongoDB connection established");
+    })
+    .catch((error) => {
+        console.log("Failed to connect to MongoDB: " + error);
     });
 
 //Routes
@@ -171,6 +180,33 @@ app.get('/grades', async (req, res) => {
     } catch (err) {
         console.error("Database error:", err);
         res.status(500).send("Database error: " + err);
+    }
+});
+
+//Get lecturers GET
+app.get('/lecturers', async (req, res) => {
+    try {
+        const lecturers = await db.getAllLecturers();
+        res.render('lecturers', {
+            lecturers: lecturers,
+            error: null
+        });
+    } catch (error) {
+        res.status(500).send("Database error: " + error);
+    }
+});
+//Delete lecturer GET
+app.get('/lecturers/delete/:lid', async (req, res) => {
+    try {
+        await db.deleteLecturer(req.params.lid);
+        res.redirect('/lecturers');
+    } catch (error) {
+        //Get all lecturers again to re-render the page with error
+        const lecturers = await db.getAllLecturers();
+        res.render('lecturers', {
+            lecturers: lecturers,
+            error: error.message
+        });
     }
 });
 
