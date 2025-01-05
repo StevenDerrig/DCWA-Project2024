@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Students Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+
+        .nav-links {
+            margin-bottom: 20px;
+        }
+
+        .nav-links a {
+            color: #0066cc;
+            text-decoration: none;
+            margin-right: 20px;
+        }
+
+        .nav-links a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Students</h1>
+
+    <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="/students/add">Add Student</a>
+    </div>
+
+    <% if (message) { %>
+        <p style="color: green;">
+            <%= message %>
+        </p>
+        <% } %>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Student ID</th>
+                        <th>Name</th>
+                        <th>Age</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% students.forEach(function(student) { %>
+                        <tr>
+                            <td>
+                                <%= student.sid %>
+                            </td>
+                            <td>
+                                <%= student.name %>
+                            </td>
+                            <td>
+                                <%= student.age %>
+                            </td>
+                            <td><a href="/students/edit/<%= student.sid %>">Update</a></td>
+                        </tr>
+                        <% }); %>
+                </tbody>
+            </table>
+</body>
+
+</html>

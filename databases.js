@@ -8,9 +8,9 @@ const createPool = async () => {
     try {
         pool = await mysql.createPool({
             connectionLimit: 3,
-            host: 'localhost',
-            user: 'root',
-            password: '',
+            host: 'localhost',  
+            user: 'root', //Wampserver default username
+            password: '', //Wampserver default password
             database: 'proj2024mysql',
         });
 

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Update Student</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+
+        .error-message {
+            color: red;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .form-group input {
+            padding: 5px;
+            width: 200px;
+        }
+
+        .form-group input[readonly] {
+            background-color: #f4f4f4;
+        }
+
+        button {
+            padding: 5px 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Update Student</h1>
+
+    <% if (errorMessage) { %>
+        <div class="error-message">
+            <%= errorMessage %>
+        </div>
+        <% } %>
+
+            <form method="POST" action="/students/edit/<%= student.sid %>">
+                <div class="form-group">
+                    <label>Student ID:</label>
+                    <input type="text" name="sid" value="<%= student.sid %>" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label>Name:</label>
+                    <input type="text" name="name" value="<%= previousData ? previousData.name : student.name %>">
+                </div>
+
+                <div class="form-group">
+                    <label>Age:</label>
+                    <input type="number" name="age" value="<%= previousData ? previousData.age : student.age %>">
+                </div>
+
+                <button type="submit">Update Student</button>
+            </form>
+
+            <p><a href="/students">Back to Students</a></p>
+</body>
+
+</html>
