@@ -1,0 +1,25 @@
+{
+  "name": "express-db-app",
+  "version": "1.0.0",
+  "description": "Assignment for Data Centric Web Applications, making an ExpressJS Web App with MySQL and Mongo Databases",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "serve": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/StevenDerrig/DCWA-Project2024.git"
+  },
+  "author": "Steven Derrig",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/StevenDerrig/DCWA-Project2024/issues"
+  },
+  "homepage": "https://github.com/StevenDerrig/DCWA-Project2024#readme",
+  "dependencies": {
+    "express": "^4.21.2",
+    "nodemon": "^3.1.9",
+    "promise-mysql": "^5.2.0"
+  }
+}
