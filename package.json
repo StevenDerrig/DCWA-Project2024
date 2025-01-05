@@ -18,7 +18,10 @@
   },
   "homepage": "https://github.com/StevenDerrig/DCWA-Project2024#readme",
   "dependencies": {
+    "body-parser": "^1.20.3",
+    "ejs": "^3.1.10",
     "express": "^4.21.2",
+    "mongoose": "^8.9.3",
     "nodemon": "^3.1.9",
     "promise-mysql": "^5.2.0"
   }
