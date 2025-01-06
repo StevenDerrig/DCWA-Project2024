@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Lecturers (MongoDB)</title>
+    <style>
+        body {
+            background-color: #bfbfbf;
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            margin: 20px auto;
+        }
+
+        th,
+        td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .error {
+            color: red;
+            text-align: center;
+            margin: 10px;
+        }
+
+        .links {
+            margin: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <h1 style="text-align: center;">Lecturers (MongoDB)</h1>
+
+    <!-- Error message display -->
+    <% if (error) { %>
+        <div class="error">
+            Error: <%= error %>
+        </div>
+        <% } %>
+
+        <!--If deletion is successful-->
+        <% if (locals.message) { %>
+            <div class="success-message" style="color: green; margin-bottom: 10px;">
+                <%= message %>
+            </div>
+        <% } %>
+
+            <!-- Lecturers table -->
+            <table>
+                <thead>
+                    <tr>
+                        <th>Lecturer ID</th>
+                        <th>Name</th>
+                        <th>Department</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% lecturers.sort((a, b)=> a._id.localeCompare(b._id)).forEach(lecturer => { %>
+                        <tr>
+                            <td>
+                                <%= lecturer._id %>
+                            </td>
+                            <td>
+                                <%= lecturer.name %>
+                            </td>
+                            <td>
+                                <%= lecturer.did %>
+                            </td>
+                            <td>
+                                <a href="/lecturers/delete/<%= lecturer._id %>"
+                                    onclick="return confirm('Are you sure you want to delete this lecturer?')">
+                                    Delete
+                                </a>
+                            </td>
+                        </tr>
+                        <% }); %>
+                </tbody>
+            </table>
+
+            <!-- Link back to home page -->
+            <div class="links">
+                <a href="/">Back to Home Page</a>
+            </div>
+</body>
+
+</html>

@@ -53,7 +53,7 @@ const getMongoDB = () => {
 //Find all lectures in the project2024MongoDB database
 const getAllLecturers = async () => {
     try {
-        const collection = mongoDb.collection('lecturers');
+        const collection = mongoDB.collection('lecturers');
         return await collection.find({}).toArray();
     } catch (error) {
         console.log("Error getting lecturers: " + error);

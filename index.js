@@ -1,3 +1,4 @@
+//Imports and reqirements
 const express = require('express');
 const app = express();
 const port = 3004;
@@ -21,7 +22,7 @@ db.createPool()
         console.log("Failed to create database pool: " + error);
     });
 //MongoDB connection
-db.connectToMongo()
+db.connectMongo()
     .then(() => {
         console.log("MongoDB connection established");
     })
@@ -32,13 +33,14 @@ db.connectToMongo()
 //Routes
 //Home page
 app.get('/', (req, res) => {
-    console.log("GET request on /");
+    console.log("GET request on Home Page");
     res.render('home');
 });
 //Display students
 app.get('/students', async (req, res) => {
     console.log("GET request on /students");
     try {
+        //Get all students from the database
         const pool = db.getPool();
         const result = await pool.query('SELECT * FROM student ORDER BY sid');
         res.render('students', {
@@ -54,6 +56,7 @@ app.get('/students/edit/:sid', async (req, res) => {
     console.log("GET request on /students/edit/" + req.params.sid);
     try {
         const pool = db.getPool();
+        //Find student by ID in the database
         const result = await pool.query('SELECT * FROM student WHERE sid = ?', [req.params.sid]);
         if (result.length > 0) {
             res.render('editStudents', {
@@ -71,6 +74,7 @@ app.get('/students/edit/:sid', async (req, res) => {
 //Handle student update POST
 app.post('/students/edit/:sid', async (req, res) => {
     console.log("POST request on /students/edit/" + req.params.sid);
+    //Get the name and age from the request body
     const { name, age } = req.body;
     let error = null;
 
@@ -101,6 +105,7 @@ app.post('/students/edit/:sid', async (req, res) => {
 //Add student page GET
 app.get('/students/add', (req, res) => {
     console.log("GET request on /students/add");
+    //Render the addStudent page, also handles errors when adding a student
     res.render('addStudent', { errors: [], previousData: null });
 });
 
@@ -158,8 +163,7 @@ app.get('/grades', async (req, res) => {
     try {
         const pool = db.getPool();
 
-        // Useing LEFT JOIN to include students with no modules
-        // Order by student name and grade in ASC order
+        //Using LEFT JOIN to include students with no modules, then order by student name and grade in ASC order
         const query = `
             SELECT 
                 s.name AS studentName,
@@ -187,9 +191,11 @@ app.get('/grades', async (req, res) => {
 app.get('/lecturers', async (req, res) => {
     try {
         const lecturers = await db.getAllLecturers();
+        //Render the lecturers page from the lecturers.ejs
         res.render('lecturers', {
             lecturers: lecturers,
-            error: null
+            error: null,
+            message: req.query.message //Success message
         });
     } catch (error) {
         res.status(500).send("Database error: " + error);
@@ -198,8 +204,14 @@ app.get('/lecturers', async (req, res) => {
 //Delete lecturer GET
 app.get('/lecturers/delete/:lid', async (req, res) => {
     try {
+        //Find lecturer details before deleting
+        const lecturers = await db.getAllLecturers();
+        const lecturer = lecturers.find(l => l._id === req.params.lid);
+
         await db.deleteLecturer(req.params.lid);
-        res.redirect('/lecturers');
+        //Redirect to lecturers page with success message
+        res.redirect('/lecturers?message=Lecturer ' + lecturer.name + ' (' + lecturer._id + ') deleted successfully');
+        console.log('Lecturer ' + lecturer.name + ' (' + lecturer._id + ') deleted successfully');
     } catch (error) {
         //Get all lecturers again to re-render the page with error
         const lecturers = await db.getAllLecturers();
